@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fbf7f5">
+  <title>Mi catálogo Yanbal</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #342d30;
+      --muted: #81767a;
+      --rose: #a64d66;
+      --rose-dark: #873b53;
+      --rose-pale: #f8edef;
+      --line: #eee5e5;
+      --paper: #fff;
+      --background: #fbf7f5;
+      --shadow: 0 18px 55px rgba(72, 42, 51, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .topbar {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner, main {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .topbar-inner {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 19px;
+      letter-spacing: -.3px;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--rose-pale);
+      color: var(--rose);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 20px;
+      font-style: italic;
+    }
+
+    .local-note {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    main { padding: 52px 0 72px; }
+
+    .intro { margin-bottom: 30px; }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--rose);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(34px, 5vw, 47px);
+      font-weight: 400;
+      letter-spacing: -1.5px;
+    }
+
+    .subtitle {
+      margin: 11px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+      align-items: start;
+      gap: 28px;
+    }
+
+    .panel {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .form-panel { padding: 24px; }
+
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 21px;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 21px;
+      font-weight: 400;
+    }
+
+    .form-label {
+      display: block;
+      margin: 16px 0 7px;
+      color: #51464a;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .form-label:first-of-type { margin-top: 0; }
+
+    .text-input {
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      border: 1px solid #e8dfe1;
+      border-radius: 9px;
+      outline: none;
+      background: #fff;
+      color: var(--ink);
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .text-input:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px rgba(166, 77, 102, .12);
+    }
+
+    .price-wrap {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .currency-input {
+      width: 78px;
+      flex: 0 0 78px;
+      text-align: center;
+    }
+
+    .price-input { min-width: 0; }
+
+    .photo-upload {
+      display: flex;
+      min-height: 82px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      border: 1px dashed #d9c6cb;
+      border-radius: 10px;
+      background: #fdfafb;
+      color: var(--muted);
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .photo-upload:hover {
+      border-color: var(--rose);
+      background: #fcf5f7;
+    }
+
+    .photo-upload span { font-size: 12px; line-height: 1.5; }
+    .photo-upload strong { color: var(--rose); }
+    .photo-upload input { display: none; }
+
+    .photo-preview {
+      display: none;
+      width: 100%;
+      max-height: 150px;
+      margin-top: 10px;
+      border-radius: 9px;
+      object-fit: cover;
+    }
+
+    .primary-button {
+      width: 100%;
+      min-height: 45px;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 9px;
+      background: var(--rose);
+      color: white;
+      font-weight: 650;
+      transition: background .15s, transform .15s;
+    }
+
+    .primary-button:hover { background: var(--rose-dark); }
+    .primary-button:active { transform: scale(.99); }
+
+    .cancel-button {
+      display: none;
+      width: 100%;
+      margin-top: 10px;
+      padding: 9px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .products-panel { min-height: 334px; }
+
+    .products-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 22px 23px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .heading-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .count-badge {
+      display: inline-grid;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 6px;
+      place-items: center;
+      border-radius: 20px;
+      background: var(--rose-pale);
+      color: var(--rose-dark);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .search-input {
+      width: min(210px, 42%);
+      height: 38px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      outline: none;
+      font-size: 12px;
+    }
+
+    .search-input:focus { border-color: var(--rose); }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      gap: 16px;
+      padding: 20px;
+    }
+
+    .product-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--paper);
+      transition: transform .18s, box-shadow .18s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(72, 42, 51, .09);
+    }
+
+    .product-image, .product-placeholder {
+      display: grid;
+      width: 100%;
+      height: 165px;
+      place-items: center;
+      background: linear-gradient(145deg, #f8eef0, #f6f0ea);
+      color: #c0929e;
+      object-fit: cover;
+    }
+
+    .product-placeholder span {
+      display: grid;
+      width: 54px;
+      height: 54px;
+      place-items: center;
+      border: 1px solid rgba(166, 77, 102, .24);
+      border-radius: 50%;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      font-style: italic;
+    }
+
+    .product-info { padding: 13px; }
+
+    .product-name {
+      overflow: hidden;
+      margin: 0;
+      font-size: 14px;
+      font-weight: 650;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .product-price {
+      margin: 7px 0 0;
+      color: var(--rose-dark);
+      font-size: 15px;
+      font-weight: 750;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .small-button {
+      flex: 1;
+      padding: 7px 5px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: white;
+      color: #665a5e;
+      font-size: 11px;
+    }
+
+    .small-button:hover { border-color: #d7b5bf; color: var(--rose-dark); }
+    .small-button.delete:hover { border-color: #e1b9b9; color: #a54141; }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      display: grid;
+      min-height: 260px;
+      place-content: center;
+      justify-items: center;
+      padding: 28px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      display: grid;
+      width: 55px;
+      height: 55px;
+      margin-bottom: 14px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--rose-pale);
+      color: var(--rose);
+      font-size: 24px;
+    }
+
+    .empty-state h3 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    .empty-state p {
+      max-width: 260px;
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .notice {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 2;
+      max-width: min(360px, calc(100vw - 44px));
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: #342d30;
+      box-shadow: var(--shadow);
+      color: white;
+      font-size: 13px;
+    }
+
+    .notice[hidden] { display: none; }
+
+    footer {
+      margin-top: 34px;
+      color: #93878b;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      main { padding-top: 36px; }
+      .layout { grid-template-columns: 1fr; gap: 18px; }
+      .form-panel { padding: 20px; }
+      .topbar-inner, main { width: min(100% - 28px, 560px); }
+    }
+
+    @media (max-width: 420px) {
+      .local-note { max-width: 125px; text-align: right; }
+      .products-heading { align-items: flex-start; padding: 17px; }
+      .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 12px; }
+      .product-image, .product-placeholder { height: 135px; }
+      .search-input { width: 42%; }
+      .small-button { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">Y</span><span>Mi catálogo Yanbal</span></div>
+      <span class="local-note">Tu vitrina personal de productos</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p class="eyebrow">Tu negocio, a tu manera</p>
+      <h1>Organiza tus productos</h1>
+      <p class="subtitle">Agrega tus productos y precios para tener tu catálogo siempre a la mano.</p>
+    </section>
+
+    <div class="layout">
+      <section class="panel form-panel" aria-labelledby="form-title">
+        <div class="panel-heading">
+          <h2 id="form-title">Nuevo producto</h2>
+        </div>
+        <form id="product-form">
+          <label class="form-label" for="product-name">Nombre del producto</label>
+          <input class="text-input" id="product-name" name="name" type="text" maxlength="80" placeholder="Ej. Perfume Ccori" required>
+
+          <label class="form-label" for="product-price">Precio</label>
+          <div class="price-wrap">
+            <input class="text-input currency-input" id="product-currency" name="currency" type="text" maxlength="5" aria-label="Moneda" value="$">
+            <input class="text-input price-input" id="product-price" name="price" type="number" min="0" step="0.01" placeholder="0.00" required>
+          </div>
+
+          <label class="form-label" for="product-photo">Foto (opcional)</label>
+          <label class="photo-upload" for="product-photo">
+            <span id="photo-label"><strong>Elegir una foto</strong><br>JPG, PNG o WebP</span>
+            <input id="product-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp">
+          </label>
+          <img id="photo-preview" class="photo-preview" alt="Vista previa de la foto seleccionada">
+
+          <button class="primary-button" id="submit-button" type="submit">Agregar producto</button>
+          <button class="cancel-button" id="cancel-button" type="button">Cancelar edición</button>
+        </form>
+      </section>
+
+      <section class="panel products-panel" aria-labelledby="products-title">
+        <div class="products-heading">
+          <div class="heading-title">
+            <h2 id="products-title">Mis productos</h2>
+            <span class="count-badge" id="product-count">0</span>
+          </div>
+          <input class="search-input" id="search" type="search" placeholder="Buscar..." aria-label="Buscar productos">
+        </div>
+        <div class="product-grid" id="product-grid" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <footer>Los productos se guardan en este navegador y solo tú puedes verlos desde este dispositivo.</footer>
+  </main>
+
+  <div class="notice" id="notice" role="status" aria-live="polite" hidden></div>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "yanbal-catalog-products-v1";
+      const form = document.querySelector("#product-form");
+      const nameInput = document.querySelector("#product-name");
+      const priceInput = document.querySelector("#product-price");
+      const currencyInput = document.querySelector("#product-currency");
+      const photoInput = document.querySelector("#product-photo");
+      const photoPreview = document.querySelector("#photo-preview");
+      const photoLabel = document.querySelector("#photo-label");
+      const submitButton = document.querySelector("#submit-button");
+      const cancelButton = document.querySelector("#cancel-button");
+      const productGrid = document.querySelector("#product-grid");
+      const productCount = document.querySelector("#product-count");
+      const searchInput = document.querySelector("#search");
+      const notice = document.querySelector("#notice");
+      let products = [];
+      let editingId = null;
+      let selectedPhoto = "";
+      let noticeTimeout;
+
+      function showNotice(message) {
+        notice.textContent = message;
+        notice.hidden = false;
+        window.clearTimeout(noticeTimeout);
+        noticeTimeout = window.setTimeout(() => { notice.hidden = true; }, 3200);
+      }
+
+      function loadProducts() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (!saved) return [];
+          const parsed = JSON.parse(saved);
+          if (!Array.isArray(parsed)) throw new Error("El catálogo guardado no tiene un formato válido.");
+          return parsed.filter(product =>
+            product && typeof product.id === "string" &&
+            typeof product.name === "string" &&
+            typeof product.price === "number" &&
+            typeof product.currency === "string" &&
+            (typeof product.photo === "string" || product.photo === "")
+          );
+        } catch (error) {
+          console.error("No se pudo cargar el catálogo.", error);
+          showNotice("No se pudo cargar el catálogo guardado. Revisa la configuración de almacenamiento del navegador.");
+          return [];
+        }
+      }
+
+      function saveProducts(nextProducts) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(nextProducts));
+          products = nextProducts;
+          return true;
+        } catch (error) {
+          console.error("No se pudo guardar el catálogo.", error);
+          showNotice("No se pudo guardar. Prueba con una foto más pequeña o libera espacio del navegador.");
+          return false;
+        }
+      }
+
+      function formatPrice(price, currency) {
+        return `${currency}${Number(price).toFixed(2)}`;
+      }
+
+      function makeEmptyState(title, description) {
+        const state = document.createElement("div");
+        state.className = "empty-state";
+        const icon = document.createElement("div");
+        icon.className = "empty-icon";
+        icon.setAttribute("aria-hidden", "true");
+        icon.textContent = "✦";
+        const heading = document.createElement("h3");
+        heading.textContent = title;
+        const paragraph = document.createElement("p");
+        paragraph.textContent = description;
+        state.append(icon, heading, paragraph);
+        return state;
+      }
+
+      function renderProducts() {
+        const query = searchInput.value.trim().toLocaleLowerCase("es");
+        const visibleProducts = products.filter(product => product.name.toLocaleLowerCase("es").includes(query));
+        productCount.textContent = String(products.length);
+        productGrid.replaceChildren();
+
+        if (visibleProducts.length === 0) {
+          productGrid.append(makeEmptyState(
+            query ? "No encontramos productos" : "Tu catálogo empieza aquí",
+            query ? "Prueba con otro nombre." : "Agrega tu primer producto usando el formulario."
+          ));
+          return;
+        }
+
+        for (const product of visibleProducts) {
+          const card = document.createElement("article");
+          card.className = "product-card";
+
+          if (product.photo) {
+            const image = document.createElement("img");
+            image.className = "product-image";
+            image.src = product.photo;
+            image.alt = product.name;
+            card.append(image);
+          } else {
+            const placeholder = document.createElement("div");
+            placeholder.className = "product-placeholder";
+            placeholder.setAttribute("aria-hidden", "true");
+            const mark = document.createElement("span");
+            mark.textContent = "Y";
+            placeholder.append(mark);
+            card.append(placeholder);
+          }
+
+          const info = document.createElement("div");
+          info.className = "product-info";
+          const name = document.createElement("h3");
+          name.className = "product-name";
+          name.title = product.name;
+          name.textContent = product.name;
+          const price = document.createElement("p");
+          price.className = "product-price";
+          price.textContent = formatPrice(product.price, product.currency);
+          const actions = document.createElement("div");
+          actions.className = "card-actions";
+
+          const editButton = document.createElement("button");
+          editButton.type = "button";
+          editButton.className = "small-button";
+          editButton.textContent = "Editar";
+          editButton.addEventListener("click", () => startEditing(product));
+
+          const deleteButton = document.createElement("button");
+          deleteButton.type = "button";
+          deleteButton.className = "small-button delete";
+          deleteButton.textContent = "Eliminar";
+          deleteButton.addEventListener("click", () => deleteProduct(product.id));
+
+          actions.append(editButton, deleteButton);
+          info.append(name, price, actions);
+          card.append(info);
+          productGrid.append(card);
+        }
+      }
+
+      function resetForm() {
+        form.reset();
+        currencyInput.value = "$";
+        selectedPhoto = "";
+        editingId = null;
+        photoPreview.removeAttribute("src");
+        photoPreview.style.display = "none";
+        photoLabel.innerHTML = "<strong>Elegir una foto</strong><br>JPG, PNG o WebP";
+        submitButton.textContent = "Agregar producto";
+        cancelButton.style.display = "none";
+        document.querySelector("#form-title").textContent = "Nuevo producto";
+        photoInput.value = "";
+      }
+
+      function startEditing(product) {
+        editingId = product.id;
+        nameInput.value = product.name;
+        priceInput.value = String(product.price);
+        currencyInput.value = product.currency;
+        selectedPhoto = product.photo;
+        if (selectedPhoto) {
+          photoPreview.src = selectedPhoto;
+          photoPreview.style.display = "block";
+          photoLabel.innerHTML = "<strong>Cambiar foto</strong><br>Elige otra imagen si lo deseas";
+        } else {
+          photoPreview.removeAttribute("src");
+          photoPreview.style.display = "none";
+          photoLabel.innerHTML = "<strong>Elegir una foto</strong><br>JPG, PNG o WebP";
+        }
+        submitButton.textContent = "Guardar cambios";
+        cancelButton.style.display = "block";
+        document.querySelector("#form-title").textContent = "Editar producto";
+        nameInput.focus();
+      }
+
+      function deleteProduct(id) {
+        const product = products.find(item => item.id === id);
+        if (!product || !window.confirm(`¿Eliminar "${product.name}" del catálogo?`)) return;
+        if (saveProducts(products.filter(item => item.id !== id))) {
+          renderProducts();
+          showNotice("Producto eliminado.");
+          if (editingId === id) resetForm();
+        }
+      }
+
+      photoInput.addEventListener("change", () => {
+        const file = photoInput.files && photoInput.files[0];
+        if (!file) return;
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+          photoInput.value = "";
+          showNotice("Elige una imagen JPG, PNG o WebP.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+          if (typeof reader.result !== "string") {
+            showNotice("No se pudo leer la imagen. Prueba con otro archivo.");
+            return;
+          }
+          const image = new Image();
+          image.addEventListener("load", () => {
+            const maxSize = 800;
+            const scale = Math.min(1, maxSize / Math.max(image.naturalWidth, image.naturalHeight));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+            canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+            const context = canvas.getContext("2d");
+            if (!context) {
+              showNotice("No se pudo procesar la imagen en este navegador.");
+              return;
+            }
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            selectedPhoto = canvas.toDataURL("image/jpeg", 0.78);
+            photoPreview.src = selectedPhoto;
+            photoPreview.style.display = "block";
+            photoLabel.innerHTML = "<strong>Foto lista</strong><br>Elige otra para cambiarla";
+          });
+          image.addEventListener("error", () => showNotice("No se pudo abrir la imagen. Prueba con otro archivo."));
+          image.src = reader.result;
+        });
+        reader.addEventListener("error", () => showNotice("No se pudo leer la imagen. Prueba con otro archivo."));
+        reader.readAsDataURL(file);
+      });
+
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+
+        const price = Number(priceInput.value);
+        if (!Number.isFinite(price) || price < 0) {
+          showNotice("Escribe un precio válido.");
+          priceInput.focus();
+          return;
+        }
+
+        const product = {
+          id: editingId || (window.crypto && typeof window.crypto.randomUUID === "function"
+            ? window.crypto.randomUUID()
+            : `${Date.now()}-${Math.random().toString(16).slice(2)}`),
+          name: nameInput.value.trim(),
+          price,
+          currency: currencyInput.value.trim() || "$",
+          photo: selectedPhoto
+        };
+        if (!product.name) {
+          nameInput.setCustomValidity("Escribe el nombre del producto.");
+          nameInput.reportValidity();
+          nameInput.setCustomValidity("");
+          return;
+        }
+
+        const nextProducts = editingId
+          ? products.map(item => item.id === editingId ? product : item)
+          : [product, ...products];
+
+        if (saveProducts(nextProducts)) {
+          const wasEditing = editingId !== null;
+          renderProducts();
+          resetForm();
+          showNotice(wasEditing ? "Cambios guardados." : "Producto agregado a tu catálogo.");
+        }
+      });
+
+      cancelButton.addEventListener("click", resetForm);
+      searchInput.addEventListener("input", renderProducts);
+      products = loadProducts();
+      renderProducts();
+    })();
+  </script>
+</body>
+</html>
