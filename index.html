@@ -76,6 +76,24 @@
       font-size: 12px;
     }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .admin-toggle {
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: white;
+      color: var(--rose-dark);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .admin-toggle:hover { border-color: #d7b5bf; }
+
     main { padding: 52px 0 72px; }
 
     .intro { margin-bottom: 30px; }
@@ -111,6 +129,8 @@
       gap: 28px;
     }
 
+    .layout.public-layout { grid-template-columns: minmax(0, 1fr); }
+
     .panel {
       overflow: hidden;
       border: 1px solid var(--line);
@@ -119,7 +139,49 @@
       box-shadow: var(--shadow);
     }
 
-    .form-panel { padding: 24px; }
+    .form-panel, .admin-panel { padding: 24px; }
+
+    .admin-description {
+      margin: -8px 0 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .admin-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .admin-actions .primary-button { margin-top: 16px; }
+    .admin-message { min-height: 18px; margin: 12px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+
+    .account-panel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .secondary-button {
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: #665a5e;
+      font-size: 12px;
+    }
+
+    .bootstrap-box {
+      margin-top: 18px;
+      padding-top: 17px;
+      border-top: 1px solid var(--line);
+    }
+
+    .bootstrap-box[hidden] { display: none; }
+    .form-panel[hidden], .admin-panel[hidden] { display: none; }
+
 
     .panel-heading {
       display: flex;
@@ -419,12 +481,16 @@
     @media (max-width: 760px) {
       main { padding-top: 36px; }
       .layout { grid-template-columns: 1fr; gap: 18px; }
-      .form-panel { padding: 20px; }
+      .form-panel, .admin-panel { padding: 20px; }
       .topbar-inner, main { width: min(100% - 28px, 560px); }
     }
 
     @media (max-width: 420px) {
       .local-note { max-width: 125px; text-align: right; }
+      .header-actions { gap: 8px; }
+      .local-note { display: none; }
+      .brand { font-size: 16px; }
+      .admin-toggle { padding: 8px 10px; }
       .products-heading { align-items: flex-start; padding: 17px; }
       .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 12px; }
       .product-image, .product-placeholder { height: 135px; }
@@ -437,19 +503,51 @@
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand"><span class="brand-mark" aria-hidden="true">Y</span><span>Mi catálogo Yanbal</span></div>
-      <span class="local-note">Tu vitrina personal de productos</span>
+      <div class="header-actions">
+        <span class="local-note">Tu vitrina de productos</span>
+        <button class="admin-toggle" id="admin-toggle" type="button" aria-expanded="false" aria-controls="admin-panel">Administrar</button>
+      </div>
     </div>
   </header>
 
   <main>
     <section class="intro">
       <p class="eyebrow">Tu negocio, a tu manera</p>
-      <h1>Organiza tus productos</h1>
-      <p class="subtitle">Agrega tus productos y precios para tener tu catálogo siempre a la mano.</p>
+      <h1>Descubre mis productos</h1>
+      <p class="subtitle">Encuentra tus favoritos y consulta sus precios.</p>
     </section>
 
-    <div class="layout">
-      <section class="panel form-panel" aria-labelledby="form-title">
+    <div class="layout public-layout" id="catalog-layout">
+      <section class="panel admin-panel" id="admin-panel" aria-labelledby="admin-title" hidden>
+        <div class="panel-heading">
+          <h2 id="admin-title">Administración</h2>
+        </div>
+        <div id="auth-form">
+          <p class="admin-description">Inicia sesión para administrar tu catálogo. Si es tu primera vez, crea tu cuenta de administradora.</p>
+          <form id="account-form">
+            <label class="form-label" for="account-email">Correo electrónico</label>
+            <input class="text-input" id="account-email" type="email" autocomplete="email" required>
+            <label class="form-label" for="account-password">Contraseña</label>
+            <input class="text-input" id="account-password" type="password" minlength="8" autocomplete="current-password" required>
+            <div class="admin-actions">
+              <button class="primary-button" id="login-button" type="button">Iniciar sesión</button>
+              <button class="primary-button" id="signup-button" type="button">Crear cuenta</button>
+            </div>
+          </form>
+          <p class="admin-message" id="auth-message" role="status" aria-live="polite"></p>
+          <div class="bootstrap-box" id="bootstrap-box" hidden>
+            <label class="form-label" for="setup-code">Código privado de configuración</label>
+            <input class="text-input" id="setup-code" type="password" autocomplete="off">
+            <button class="primary-button" id="claim-button" type="button">Activar mi cuenta de administradora</button>
+          </div>
+        </div>
+        <div class="account-panel" id="account-panel" hidden>
+          <span id="account-status"></span>
+          <button class="secondary-button" id="logout-button" type="button">Cerrar sesión</button>
+        </div>
+      </section>
+
+      <section class="panel form-panel" id="product-editor" aria-labelledby="form-title" hidden>
         <div class="panel-heading">
           <h2 id="form-title">Nuevo producto</h2>
         </div>
@@ -487,14 +585,19 @@
       </section>
     </div>
 
-    <footer>Los productos se guardan en este navegador y solo tú puedes verlos desde este dispositivo.</footer>
+    <footer>Consulta el catálogo desde cualquier dispositivo.</footer>
   </main>
 
   <div class="notice" id="notice" role="status" aria-live="polite" hidden></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     (() => {
-      const STORAGE_KEY = "yanbal-catalog-products-v1";
+      const SUPABASE_URL = "https://jttoyfaxqhsbfmpvvmbm.supabase.co";
+      const SUPABASE_KEY = "sb_publishable__AxlCBQ4friA51hlscvsCw_pKpTVxHR";
+      const client = window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+        : null;
       const form = document.querySelector("#product-form");
       const nameInput = document.querySelector("#product-name");
       const priceInput = document.querySelector("#product-price");
@@ -508,9 +611,25 @@
       const productCount = document.querySelector("#product-count");
       const searchInput = document.querySelector("#search");
       const notice = document.querySelector("#notice");
+      const layout = document.querySelector("#catalog-layout");
+      const adminToggle = document.querySelector("#admin-toggle");
+      const adminPanel = document.querySelector("#admin-panel");
+      const editorPanel = document.querySelector("#product-editor");
+      const authForm = document.querySelector("#auth-form");
+      const accountForm = document.querySelector("#account-form");
+      const accountEmail = document.querySelector("#account-email");
+      const accountPassword = document.querySelector("#account-password");
+      const authMessage = document.querySelector("#auth-message");
+      const accountPanel = document.querySelector("#account-panel");
+      const accountStatus = document.querySelector("#account-status");
+      const bootstrapBox = document.querySelector("#bootstrap-box");
+      const setupCode = document.querySelector("#setup-code");
       let products = [];
       let editingId = null;
       let selectedPhoto = "";
+      let ownerId = null;
+      let currentUser = null;
+      let adminOpen = false;
       let noticeTimeout;
 
       function showNotice(message) {
@@ -520,40 +639,62 @@
         noticeTimeout = window.setTimeout(() => { notice.hidden = true; }, 3200);
       }
 
-      function loadProducts() {
-        try {
-          const saved = localStorage.getItem(STORAGE_KEY);
-          if (!saved) return [];
-          const parsed = JSON.parse(saved);
-          if (!Array.isArray(parsed)) throw new Error("El catálogo guardado no tiene un formato válido.");
-          return parsed.filter(product =>
-            product && typeof product.id === "string" &&
-            typeof product.name === "string" &&
-            typeof product.price === "number" &&
-            typeof product.currency === "string" &&
-            (typeof product.photo === "string" || product.photo === "")
-          );
-        } catch (error) {
-          console.error("No se pudo cargar el catálogo.", error);
-          showNotice("No se pudo cargar el catálogo guardado. Revisa la configuración de almacenamiento del navegador.");
-          return [];
-        }
-      }
-
-      function saveProducts(nextProducts) {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(nextProducts));
-          products = nextProducts;
-          return true;
-        } catch (error) {
-          console.error("No se pudo guardar el catálogo.", error);
-          showNotice("No se pudo guardar. Prueba con una foto más pequeña o libera espacio del navegador.");
-          return false;
-        }
-      }
-
       function formatPrice(price, currency) {
         return `${currency}${Number(price).toFixed(2)}`;
+      }
+
+      function updateAdminView() {
+        const isAdmin = Boolean(currentUser && ownerId && currentUser.id === ownerId);
+        adminPanel.hidden = !adminOpen;
+        editorPanel.hidden = !isAdmin || !adminOpen;
+        authForm.hidden = isAdmin;
+        accountPanel.hidden = !isAdmin;
+        bootstrapBox.hidden = Boolean(ownerId) || !currentUser;
+        layout.classList.toggle("public-layout", !adminOpen);
+        adminToggle.setAttribute("aria-expanded", String(adminOpen));
+        if (isAdmin) accountStatus.textContent = "Sesión de administradora activa";
+      }
+
+      async function loadOwner() {
+        const { data, error } = await client
+          .from("catalog_settings")
+          .select("owner_id")
+          .eq("id", true)
+          .maybeSingle();
+        if (error) throw error;
+        ownerId = data ? data.owner_id : null;
+      }
+
+      async function loadProducts() {
+        const { data, error } = await client
+          .from("yanbal_products")
+          .select("id, name, price, currency, photo, created_at")
+          .order("created_at", { ascending: false });
+        if (error) throw error;
+        products = data || [];
+        renderProducts();
+      }
+
+      async function refreshAdminState() {
+        const { data, error } = await client.auth.getSession();
+        if (error) throw error;
+        currentUser = data.session ? data.session.user : null;
+        updateAdminView();
+      }
+
+      async function refreshCatalog() {
+        try {
+          if (!client) throw new Error("No se pudo cargar la conexión con Supabase.");
+          await Promise.all([loadOwner(), loadProducts()]);
+          await refreshAdminState();
+        } catch (error) {
+          console.error("No se pudo cargar el catálogo compartido.", error);
+          productGrid.replaceChildren(makeEmptyState(
+            "No se pudo cargar el catálogo",
+            "Vuelve a intentarlo más tarde o avisa a la administradora."
+          ));
+          showNotice("No se pudo conectar con el catálogo. Comprueba la conexión e inténtalo de nuevo.");
+        }
       }
 
       function makeEmptyState(title, description) {
@@ -614,23 +755,23 @@
           const price = document.createElement("p");
           price.className = "product-price";
           price.textContent = formatPrice(product.price, product.currency);
-          const actions = document.createElement("div");
-          actions.className = "card-actions";
-
-          const editButton = document.createElement("button");
-          editButton.type = "button";
-          editButton.className = "small-button";
-          editButton.textContent = "Editar";
-          editButton.addEventListener("click", () => startEditing(product));
-
-          const deleteButton = document.createElement("button");
-          deleteButton.type = "button";
-          deleteButton.className = "small-button delete";
-          deleteButton.textContent = "Eliminar";
-          deleteButton.addEventListener("click", () => deleteProduct(product.id));
-
-          actions.append(editButton, deleteButton);
-          info.append(name, price, actions);
+          info.append(name, price);
+          if (currentUser && currentUser.id === ownerId) {
+            const actions = document.createElement("div");
+            actions.className = "card-actions";
+            const editButton = document.createElement("button");
+            editButton.type = "button";
+            editButton.className = "small-button";
+            editButton.textContent = "Editar";
+            editButton.addEventListener("click", () => startEditing(product));
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "small-button delete";
+            deleteButton.textContent = "Eliminar";
+            deleteButton.addEventListener("click", () => deleteProduct(product.id));
+            actions.append(editButton, deleteButton);
+            info.append(actions);
+          }
           card.append(info);
           productGrid.append(card);
         }
@@ -671,13 +812,85 @@
         nameInput.focus();
       }
 
-      function deleteProduct(id) {
+      async function deleteProduct(id) {
         const product = products.find(item => item.id === id);
         if (!product || !window.confirm(`¿Eliminar "${product.name}" del catálogo?`)) return;
-        if (saveProducts(products.filter(item => item.id !== id))) {
+        try {
+          const { error } = await client.from("yanbal_products").delete().eq("id", id);
+          if (error) throw error;
+          products = products.filter(item => item.id !== id);
           renderProducts();
           showNotice("Producto eliminado.");
           if (editingId === id) resetForm();
+        } catch (error) {
+          console.error("No se pudo eliminar el producto.", error);
+          showNotice("No se pudo eliminar el producto. Inténtalo de nuevo.");
+        }
+      }
+
+      async function signIn() {
+        authMessage.textContent = "";
+        try {
+          const { data, error } = await client.auth.signInWithPassword({
+            email: accountEmail.value.trim(),
+            password: accountPassword.value
+          });
+          if (error) throw error;
+          currentUser = data.user;
+          await loadOwner();
+          updateAdminView();
+          renderProducts();
+          authMessage.textContent = currentUser.id === ownerId
+            ? "Sesión iniciada."
+            : "Esta cuenta no tiene permisos de administradora.";
+        } catch (error) {
+          console.error("No se pudo iniciar sesión.", error);
+          authMessage.textContent = error.message || "No se pudo iniciar sesión.";
+        }
+      }
+
+      async function signUp() {
+        authMessage.textContent = "";
+        try {
+          const { data, error } = await client.auth.signUp({
+            email: accountEmail.value.trim(),
+            password: accountPassword.value,
+            options: { emailRedirectTo: window.location.href.split("#")[0] }
+          });
+          if (error) throw error;
+          currentUser = data.session ? data.session.user : null;
+          updateAdminView();
+          authMessage.textContent = data.session
+            ? "Cuenta creada. Inicia sesión para activar la administración."
+            : "Cuenta creada. Revisa tu correo para confirmar la cuenta y luego inicia sesión.";
+        } catch (error) {
+          console.error("No se pudo crear la cuenta.", error);
+          authMessage.textContent = error.message || "No se pudo crear la cuenta.";
+        }
+      }
+
+      async function claimAdmin() {
+        const code = setupCode.value.trim();
+        if (!code) {
+          showNotice("Escribe el código privado de configuración.");
+          setupCode.focus();
+          return;
+        }
+        try {
+          const { data, error } = await client.rpc("claim_catalog_admin", { setup_code: code });
+          if (error) throw error;
+          if (!data) {
+            showNotice("El código no es válido o ya se usó.");
+            return;
+          }
+          setupCode.value = "";
+          await loadOwner();
+          updateAdminView();
+          renderProducts();
+          showNotice("Tu cuenta ya puede administrar el catálogo.");
+        } catch (error) {
+          console.error("No se pudo activar la cuenta de administración.", error);
+          showNotice("No se pudo activar la administración. Inicia sesión y comprueba el código.");
         }
       }
 
@@ -723,7 +936,7 @@
 
       form.addEventListener("submit", event => {
         event.preventDefault();
-        if (!form.reportValidity()) return;
+        if (!form.reportValidity() || !currentUser || currentUser.id !== ownerId) return;
 
         const price = Number(priceInput.value);
         if (!Number.isFinite(price) || price < 0) {
@@ -733,9 +946,6 @@
         }
 
         const product = {
-          id: editingId || (window.crypto && typeof window.crypto.randomUUID === "function"
-            ? window.crypto.randomUUID()
-            : `${Date.now()}-${Math.random().toString(16).slice(2)}`),
           name: nameInput.value.trim(),
           price,
           currency: currencyInput.value.trim() || "$",
@@ -748,22 +958,61 @@
           return;
         }
 
-        const nextProducts = editingId
-          ? products.map(item => item.id === editingId ? product : item)
-          : [product, ...products];
-
-        if (saveProducts(nextProducts)) {
-          const wasEditing = editingId !== null;
+        const wasEditing = editingId !== null;
+        const saveButton = submitButton;
+        saveButton.disabled = true;
+        (async () => {
+          try {
+            const result = editingId
+              ? await client.from("yanbal_products").update(product).eq("id", editingId).select().single()
+              : await client.from("yanbal_products").insert(product).select().single();
+            if (result.error) throw result.error;
+            products = editingId
+              ? products.map(item => item.id === editingId ? result.data : item)
+              : [result.data, ...products];
           renderProducts();
           resetForm();
           showNotice(wasEditing ? "Cambios guardados." : "Producto agregado a tu catálogo.");
-        }
+          } catch (error) {
+            console.error("No se pudo guardar el producto.", error);
+            showNotice("No se pudo guardar el producto. Revisa los datos e inténtalo de nuevo.");
+          } finally {
+            saveButton.disabled = false;
+          }
+        })();
       });
 
       cancelButton.addEventListener("click", resetForm);
       searchInput.addEventListener("input", renderProducts);
-      products = loadProducts();
+      adminToggle.addEventListener("click", () => {
+        adminOpen = !adminOpen;
+        updateAdminView();
+      });
+      document.querySelector("#login-button").addEventListener("click", signIn);
+      document.querySelector("#signup-button").addEventListener("click", signUp);
+      document.querySelector("#claim-button").addEventListener("click", claimAdmin);
+      document.querySelector("#logout-button").addEventListener("click", async () => {
+        const { error } = await client.auth.signOut();
+        if (error) {
+          console.error("No se pudo cerrar sesión.", error);
+          showNotice("No se pudo cerrar la sesión. Inténtalo de nuevo.");
+          return;
+        }
+        currentUser = null;
+        adminOpen = false;
+        updateAdminView();
+        renderProducts();
+      });
+      accountForm.addEventListener("submit", event => event.preventDefault());
+      if (client) {
+        client.auth.onAuthStateChange((_event, session) => {
+          currentUser = session ? session.user : null;
+          updateAdminView();
+          renderProducts();
+        });
+      }
       renderProducts();
+      refreshCatalog();
     })();
   </script>
 </body>
