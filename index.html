@@ -164,6 +164,8 @@
       gap: 12px;
     }
 
+    .account-panel[hidden] { display: none; }
+
     .secondary-button {
       padding: 9px 12px;
       border: 1px solid var(--line);
@@ -721,7 +723,11 @@
         if (visibleProducts.length === 0) {
           productGrid.append(makeEmptyState(
             query ? "No encontramos productos" : "Tu catálogo empieza aquí",
-            query ? "Prueba con otro nombre." : "Agrega tu primer producto usando el formulario."
+            query
+              ? "Prueba con otro nombre."
+              : currentUser && currentUser.id === ownerId
+                ? "Agrega tu primer producto desde el panel de administración."
+                : "Pronto aparecerán aquí nuestros productos."
           ));
           return;
         }
